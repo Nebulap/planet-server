@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/planet
+    username: root
+    password: forest..
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
+  application:
+    name: generateService
+server:
+  port: 8082
+
+
+template:
+  path: D:/planet/template
