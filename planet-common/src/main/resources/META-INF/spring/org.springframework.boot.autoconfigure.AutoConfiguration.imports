@@ -1,0 +1,4 @@
+  com.kai.planet.common.config.GlobalExceptionHandlerAutoConfiguration
+  com.kai.planet.common.config.RolesAspectAutoConfiguration
+  com.kai.planet.common.config.MyRedisAutoConfiguration
+  com.kai.planet.common.config.FeignClientAutoConfiguration
