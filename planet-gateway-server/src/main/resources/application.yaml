@@ -1,0 +1,59 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+      database: 1
+      lettuce:
+        pool:
+          max-idle: 16
+          max-active: 32
+          min-idle: 8
+
+  autoconfigure:
+    exclude:
+      - com.kai.planet.common.config.RolesAspectAutoConfiguration
+      - com.kai.planet.common.config.GlobalExceptionHandlerAutoConfiguration
+
+  application:
+    name: gatewayService
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
+    gateway:
+      routes:
+        - id: fileService
+          uri: lb://fileService
+          predicates:
+            - Path=/file/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: FileServiceFallback
+                fallbackUri: forward:/file/fallback
+
+        - id: generateService
+          uri: lb://generateService
+          predicates:
+            - Path=/generate/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: GenerateServiceFallback
+                fallbackUri: forward:/generate/fallback
+
+        - id: userService
+          uri: lb://userService
+          predicates:
+            - Path=/user/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: UserServiceFallback
+                fallbackUri: forward:/user/fallback
+
+server:
+  port: 8080
