@@ -148,6 +148,12 @@
                 <version>1.38.0</version>
             </dependency>
 
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-jwt</artifactId>
+                <version>1.38.0</version>
+            </dependency>
+
 <!--            FastJson2 Dependency-->
             <dependency>
                 <groupId>com.alibaba.fastjson2</groupId>

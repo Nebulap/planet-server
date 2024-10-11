@@ -4,6 +4,7 @@ import com.kai.planet.common.domain.response.R
 import com.kai.planet.common.exception.CustomException
 import com.kai.planet.common.exception.CustomMessageException
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
 /**
@@ -16,13 +17,16 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 @RestControllerAdvice
 class GatewayExceptionHandler {
 
+    @ResponseBody
     @ExceptionHandler(CustomException::class)
     fun handleCustomException(e: CustomException) :R<Void> {
         return  R.fail(e.exceptionCode.msg, e.exceptionCode.code)
     }
 
+    @ResponseBody
     @ExceptionHandler(CustomMessageException::class)
     fun handleCustomMessageException(e: CustomMessageException) :R<Void> {
         return  R.fail(e.message, e.code)
     }
+
 }

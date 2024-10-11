@@ -14,4 +14,6 @@ enum class GlobalExceptionCode(override val code: Int, override val msg: String)
     PARAMETER_ERROR(1000, "参数错误"),
     SERVICE_ERROR(5000, "服务异常"),
     PERMISSION_ERROR(5001, "你没有权限访问此资源"),
+    NOT_LOGIN_ERROR(5002, "没有登录"),
+    NOT_ROLE_ERROR(5002, "没有相应的角色"),
 }
