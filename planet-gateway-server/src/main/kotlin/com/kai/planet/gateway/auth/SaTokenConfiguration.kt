@@ -1,8 +1,6 @@
 package com.kai.planet.gateway.auth
 
-import cn.dev33.satoken.jwt.StpLogicJwtForSimple
 import cn.dev33.satoken.reactor.filter.SaReactorFilter
-import cn.dev33.satoken.stp.StpLogic
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -15,17 +13,11 @@ import org.springframework.context.annotation.Configuration
  */
 
 
-@Configuration
+@Configuration("gatewaySaTokenConfiguration")
 open class SaTokenConfiguration {
 
     @Bean
     open fun getSaReactorFilter(): SaReactorFilter? {
         return MySaReactorFilter()
     }
-
-    @Bean
-    open fun getStpLogicJwt(): StpLogic {
-        return StpLogicJwtForSimple()
-    }
-
 }

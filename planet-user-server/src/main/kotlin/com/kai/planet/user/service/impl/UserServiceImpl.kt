@@ -1,6 +1,8 @@
 package com.kai.planet.user.service.impl
 
+import cn.dev33.satoken.stp.SaLoginModel
 import cn.dev33.satoken.stp.StpUtil
+import com.kai.planet.common.config.USER_CURRENT_ROLE_KEY
 import com.kai.planet.common.domain.dto.user.UserInfoDTO
 import com.kai.planet.common.domain.dto.user.UserSignInDTO
 import com.kai.planet.common.domain.entity.user.Role
@@ -15,8 +17,8 @@ import com.kai.planet.user.service.PermissionService
 import com.kai.planet.user.service.UserService
 import com.mybatisflex.kotlin.extensions.db.filterOne
 import com.mybatisflex.kotlin.extensions.db.query
-import com.mybatisflex.kotlin.extensions.db.tableInfo
 import com.mybatisflex.kotlin.extensions.kproperty.eq
+import com.mybatisflex.kotlin.extensions.wrapper.select
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
@@ -47,12 +49,13 @@ class UserServiceImpl(
             throw CustomException(UserCustomExceptionCode.USER_NOT_FOUND_OR_PASSWORD_ERROR)
         }
 
-        // Update user's info in redis
-//        val info = this.updateUserInfoInRedis(user.id!!)
+        val info = this.getUserInfo(user.id!!)
 
-//        println(JSON.toJSONString(info))
+        val loginModel = SaLoginModel()
+            .setExtra(USER_CURRENT_ROLE_KEY, info.currentRole!!.code)
+
         // Login user and return the token
-        StpUtil.login(user.id!!)
+        StpUtil.login(user.id!!, loginModel)
         return UserSignInDTO(StpUtil.getTokenValue())
     }
 
@@ -70,11 +73,13 @@ class UserServiceImpl(
         // Add ADMIN role
         permissionService.addRole(user.id!!, com.kai.planet.common.constants.user.RoleEnum.ADMIN)
 
-        // Update user's info in redis
-//        this.updateUserInfoInRedis(user.id!!)
+        val info = this.getUserInfo(user.id!!)
+
+        val loginModel = SaLoginModel()
+            .setExtra(USER_CURRENT_ROLE_KEY, info.currentRole!!.code)
 
         // Login user and return the token
-        StpUtil.login(user.id!!)
+        StpUtil.login(user.id!!, loginModel)
         return UserSignInDTO(StpUtil.getTokenValue())
     }
 
@@ -85,7 +90,7 @@ class UserServiceImpl(
      */
     override fun findUser(username: String): User? = filterOne { User::username eq username }
 
-    override fun findUser(userId: Long): User? =  filterOne { User::id eq userId }
+    override fun findUser(userId: Long): User? = filterOne { User::id eq userId }
 
 //    override fun updateUserInfoInRedis(userId: Long): UserInfoDTO {
 //        val key = UserRedisKey.getUserInfoKey(userId)
@@ -101,8 +106,8 @@ class UserServiceImpl(
         val user: User = this.findUser(userId) ?: throw CustomException(UserCustomExceptionCode.USER_NOT_FOUND)
         val role: Role = filterOne { Role::id eq user.role } ?: throw CustomException(UserCustomExceptionCode.USER_ROLE_NOT_EXISTS)
         val roles: List<Role> = query {
-            select(UserRole::roleId, UserRole::userId)
-            select(*Role::class.tableInfo.allColumns)
+//            select(UserRole::roleId, UserRole::userId).`as`("t1")
+            select(Role::class)
             from(UserRole::class.java)
             leftJoin(Role::class.java).on(UserRole::roleId, Role::id)
             where(UserRole::userId eq userId)

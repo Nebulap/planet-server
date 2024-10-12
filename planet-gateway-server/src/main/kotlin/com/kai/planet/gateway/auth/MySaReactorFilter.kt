@@ -1,5 +1,6 @@
 package com.kai.planet.gateway.auth
 
+import cn.dev33.satoken.SaManager
 import cn.dev33.satoken.exception.NotLoginException
 import cn.dev33.satoken.exception.NotRoleException
 import cn.dev33.satoken.exception.SaTokenException
@@ -39,6 +40,7 @@ class MySaReactorFilter : SaReactorFilter() {
 
     override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
         exchange.attributes["WEB_FILTER_CHAIN_KEY"] = chain
+        val b =  SaManager.getStpInterface()
 
         return try {
             SaReactorSyncHolder.setContext(exchange)
@@ -60,7 +62,7 @@ class MySaReactorFilter : SaReactorFilter() {
                 SaReactorSyncHolder.clearContext()
             }
         } catch (e: Exception) {
-
+            e.printStackTrace()
             val result = handleSaTokenException(e)
 
             if (exchange.response.headers.getFirst(HttpHeaders.CONTENT_TYPE) == null) {

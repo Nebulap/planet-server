@@ -1,6 +1,7 @@
 package com.kai.planet.user.controller
 
-import cn.dev33.satoken.annotation.SaIgnore
+import com.kai.planet.common.annotation.Roles
+import com.kai.planet.common.constants.user.RoleEnum
 import com.kai.planet.common.domain.request.user.UserSignInRequest
 import com.kai.planet.common.domain.request.user.UserSignUpRequest
 import com.kai.planet.common.exception.CustomException
@@ -23,23 +24,21 @@ class UserController(
     private val userService: UserService
 ) {
 
-    @SaIgnore
     @PostMapping("/sign-in")
     fun signIn(@Validated @RequestBody request: UserSignInRequest) = userService.signIn(request)
 
-    @SaIgnore
     @PostMapping("/sign-up")
     fun signUp(@Validated @RequestBody request: UserSignUpRequest) = userService.signUp(request)
 
-    @SaIgnore
+    @Roles(RoleEnum.ADMIN)
     @GetMapping("/test")
     fun test(): String {
         throw CustomException(UserCustomExceptionCode.USER_ROLE_EXISTS)
     }
-    @SaIgnore
+
+    @Roles(RoleEnum.USER)
     @GetMapping("/test1")
     fun test1(): String {
-        val a = 1/0;
-        return ""
+        throw CustomException(UserCustomExceptionCode.USER_ROLE_EXISTS)
     }
 }

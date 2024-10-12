@@ -2,3 +2,4 @@
   com.kai.planet.common.config.RolesAspectAutoConfiguration
   com.kai.planet.common.config.MyRedisAutoConfiguration
   com.kai.planet.common.config.FeignClientAutoConfiguration
+  com.kai.planet.common.config.SaTokenConfiguration

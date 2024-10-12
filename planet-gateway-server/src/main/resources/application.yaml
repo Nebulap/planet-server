@@ -1,17 +1,6 @@
 spring:
   main:
     allow-bean-definition-overriding: true
-  data:
-    redis:
-      host: localhost
-      port: 6379
-      password:
-      database: 1
-      lettuce:
-        pool:
-          max-idle: 16
-          max-active: 32
-          min-idle: 8
 
   autoconfigure:
     exclude:
@@ -57,7 +46,3 @@ spring:
 
 server:
   port: 8080
-
-sa-token:
-  token-name: token
-  jwt-secret-key: 5b4c7e7c-c6c7-4f7f-b7c7-c7c7c7c7c7c7

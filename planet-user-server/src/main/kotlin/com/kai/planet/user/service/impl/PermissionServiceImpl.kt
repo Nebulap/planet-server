@@ -38,7 +38,7 @@ class PermissionServiceImpl : PermissionService {
         return filterOne { Role::id eq user.role }
     }
 
-    override fun getRoleByEnum(roleEnum: RoleEnum): Role? = filterOne { Role::name eq roleEnum.name }
+    override fun getRoleByEnum(roleEnum: RoleEnum): Role? = filterOne { Role::code eq roleEnum.name }
 
     /**
      * Add role to user

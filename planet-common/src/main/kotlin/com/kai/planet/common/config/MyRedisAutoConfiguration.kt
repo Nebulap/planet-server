@@ -5,9 +5,13 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.annotation.PropertyAccessor
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.connection.RedisConnectionFactory
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
+import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer
 import org.springframework.data.redis.serializer.StringRedisSerializer
@@ -25,6 +29,28 @@ import java.util.logging.Logger
 open class MyRedisAutoConfiguration {
 
     private val logger: Logger = Logger.getLogger(RolesAspectAutoConfiguration::class.java.name)
+
+    @Bean
+    open fun redisConnectionFactory(): RedisConnectionFactory {
+
+        val redisConfig = RedisStandaloneConfiguration().apply {
+            hostName = "localhost"
+            port = 6379
+            database = 2
+        }
+
+        val poolConfig = GenericObjectPoolConfig<Any>().apply {
+            maxIdle = 16
+            maxTotal = 32
+            minIdle = 8
+        }
+
+        val clientConfig = LettucePoolingClientConfiguration.builder()
+            .poolConfig(poolConfig)
+            .build()
+
+        return LettuceConnectionFactory(redisConfig, clientConfig)
+    }
 
     @Bean(name = ["redisTemplate"])
     open fun getRedisTemplate(factory: RedisConnectionFactory): RedisTemplate<String, Any> {

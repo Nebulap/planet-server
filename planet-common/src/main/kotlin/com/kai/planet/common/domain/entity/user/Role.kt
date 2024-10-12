@@ -15,7 +15,7 @@ import com.mybatisflex.annotation.Table
 @Table("t_roles")
 data class Role(
     @Id(keyType = KeyType.Auto, value = "id") val id: Long? = null,
-    @Column("name") val name: String,
+    @Column("code") val code: String,
     @Column("description") val description: String? = null,
     @Column("priority") val priority: Int = 0
 )

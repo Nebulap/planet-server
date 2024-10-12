@@ -1,5 +1,6 @@
 package com.kai.planet.common.config
 
+import cn.dev33.satoken.stp.StpUtil
 import com.kai.planet.common.constants.http.CustomHttpHeaders
 import com.kai.planet.common.feign.CustomFeignClient
 import feign.RequestInterceptor
@@ -26,6 +27,7 @@ open class FeignClientAutoConfiguration {
     open fun feignRequestInterceptor(): RequestInterceptor {
         return RequestInterceptor { template ->
             template.header(CustomHttpHeaders.X_INTERNAL_REQUEST, true.toString())
+            template.header(TOKEN_NAME,StpUtil.getTokenValue())
         }
     }
 

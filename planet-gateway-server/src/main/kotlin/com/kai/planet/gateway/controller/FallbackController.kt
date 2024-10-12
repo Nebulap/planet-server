@@ -2,7 +2,6 @@ package com.kai.planet.gateway.controller
 
 import com.kai.planet.common.exception.CustomException
 import com.kai.planet.gateway.exception.ServerCustomExceptionCode
-import jakarta.annotation.PostConstruct
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -16,11 +15,6 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class FallbackController {
-
-    @PostConstruct
-    fun init() {
-        println("FallbackController init")
-    }
 
     @RequestMapping("/user/fallback")
     fun fallback() {

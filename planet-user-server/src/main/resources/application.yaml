@@ -13,7 +13,3 @@ spring:
 
 server:
   port: 8081
-
-sa-token:
-  token-name: token
-  jwt-secret-key: 5b4c7e7c-c6c7-4f7f-b7c7-c7c7c7c7c7c7

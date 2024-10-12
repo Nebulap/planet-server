@@ -1,4 +1,4 @@
-package com.kai.planet.user.constants
+package com.kai.planet.common.constants.user
 
 /**
  *
