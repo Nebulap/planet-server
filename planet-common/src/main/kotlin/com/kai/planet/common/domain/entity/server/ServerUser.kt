@@ -15,7 +15,7 @@ import com.mybatisflex.annotation.Table
 @Table("t_server_user")
 data class ServerUser(
     @Id(keyType = KeyType.Auto)
-    val id: Long?,
+    val id: Long? = null,
     val serverId: Int,
     val userId: Long,
 )

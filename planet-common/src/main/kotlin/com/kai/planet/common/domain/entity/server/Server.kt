@@ -1,6 +1,7 @@
 package com.kai.planet.common.domain.entity.server
 
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.mybatisflex.annotation.Id
 import com.mybatisflex.annotation.KeyType
 import com.mybatisflex.annotation.Table
@@ -15,7 +16,7 @@ import java.time.LocalDateTime
 
 
 @Table("t_server")
-data class Server(
+open class Server(
  @Id(keyType = KeyType.Auto)
  var id: Int? = null, // 服务器的唯一标识符
 
@@ -30,8 +31,8 @@ data class Server(
 
  var tags: String?, // 服务器标签，用逗号分隔
  var cpuCores: Int?, // CPU 核心数
- var memory: Int?, // 总内存（MB 或 GB）
- var disk: Int?, // 磁盘总容量（GB）
+ @JsonProperty("memTotal") var memory: Int?, // 总内存（MB 或 GB）
+ @JsonProperty("diskTotal") var disk: Int?, // 磁盘总容量（GB）
 
  var billingMode: String?, // 计费模式 ("hourly", "monthly", "prepaid")
  var sshKeys: String?, // 与服务器关联的 SSH 密钥 ID 数组，用逗号分隔

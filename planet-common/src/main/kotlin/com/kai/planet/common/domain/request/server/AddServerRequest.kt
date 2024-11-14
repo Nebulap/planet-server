@@ -12,7 +12,7 @@ import java.time.LocalDateTime
  */
 
 
-data class AddServerRequest (
+data class AddServerRequest(
     val name: String, // 服务器名称
     val os: String?, // 操作系统（如：Ubuntu 20.04, Windows Server）
     val ip: String, // 公网 IP 地址
@@ -28,4 +28,6 @@ data class AddServerRequest (
     val sshKeys: String?, // 与服务器关联的 SSH 密钥 ID 数组，用逗号分隔
 
     val remote: Remote, // 远程服务器配置
+
+    val autoFullInfo: Boolean = false,
 )

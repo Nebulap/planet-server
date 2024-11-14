@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 
 
 open class ServerStateDTO(
-    @JsonProperty("status") var status: String? = ServerState.UNKNOWN, // 服务器状态
+    @JsonProperty("status") var status: String? = ServerState.ERROR, // 服务器状态
     @JsonProperty("cpuUsage") val cpuUsage: String = "--",  // 当前 CPU 使用率（百分比）
     @JsonProperty("memTotal") val memUsage: String = "--",   // 内存总量（MB）
     @JsonProperty("memFree") val memFree: String = "--",   // 当前空闲内存（MB）
