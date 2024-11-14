@@ -1,6 +1,7 @@
 package com.kai.planet.gateway.web
 
 import com.alibaba.fastjson2.JSON
+import com.alibaba.fastjson2.JSONObject
 import com.kai.planet.common.domain.response.R
 import org.reactivestreams.Publisher
 import org.springframework.cloud.gateway.filter.GatewayFilterChain
@@ -10,6 +11,7 @@ import org.springframework.core.Ordered
 import org.springframework.core.io.buffer.DataBuffer
 import org.springframework.core.io.buffer.DataBufferFactory
 import org.springframework.core.io.buffer.DataBufferUtils
+import org.springframework.core.io.buffer.DefaultDataBufferFactory
 import org.springframework.http.server.reactive.ServerHttpResponse
 import org.springframework.http.server.reactive.ServerHttpResponseDecorator
 import org.springframework.stereotype.Component
@@ -17,6 +19,7 @@ import org.springframework.web.server.ServerWebExchange
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.nio.charset.StandardCharsets
+
 
 /**
  *
@@ -49,26 +52,45 @@ class HttpResponseFilter : GlobalFilter, Ordered {
                 return super.writeWith(body)
             }
             val fluxBody = body as Flux<out DataBuffer>
-            return super.writeWith(fluxBody.map { dataBuffer ->
-                // Probably should reuse buffers
-                val content = ByteArray(dataBuffer.readableByteCount())
-                dataBuffer.read(content)
-                DataBufferUtils.release(dataBuffer)
-                // Convert response body
-                val responseString = String(content, StandardCharsets.UTF_8)
-                val r: R<*>? = try {
-                    JSON.parseObject(responseString, R::class.java)
-                }catch (e:Exception){
-                    R.ok(JSON.parseObject(responseString))
-                }
-                bufferFactory.wrap(JSON.toJSONBytes(r))
-            })
+
+            val publisher = fluxBody.buffer().map { dataBuffer -> processDataBuffer(dataBuffer) }
+            return super.writeWith(publisher)
         }
 
         override fun writeAndFlushWith(body: Publisher<out Publisher<out DataBuffer>>): Mono<Void> {
             return writeWith(Flux.from(body).flatMapSequential { p -> p })
         }
 
+        private fun processDataBuffer(dataBuffers: List<DataBuffer>): DataBuffer {
+            val dataBufferFactory: DataBufferFactory = DefaultDataBufferFactory()
+            val join = dataBufferFactory.join(dataBuffers)
+            val content = ByteArray(join.readableByteCount())
+            join.read(content);
+            DataBufferUtils.release(join);
+            val responseString = String(content, StandardCharsets.UTF_8)
+
+//            val content = ByteArray(dataBuffer.readableByteCount())
+//            dataBuffer.read(content)
+//            DataBufferUtils.release(dataBuffer)
+
+            println(">>>>>>>>>>>>>>>>>>>>>>>封装")
+//            val responseString = String(content, StandardCharsets.UTF_8)
+            // 移除控制字符
+            val sanitizedJson = responseString.replace(Regex("[\\x00-\\x1F\\x7F]"), "")
+            var r: R<*>?
+            try {
+                r = JSON.parseObject(sanitizedJson, R::class.java)
+            } catch (e: Exception) {
+                if (sanitizedJson.startsWith("[")) {
+                    r = R.ok(JSON.parseArray(sanitizedJson, JSONObject::class.java))
+                } else if (sanitizedJson.startsWith("{")) {
+                    r = R.ok(JSON.parseObject(sanitizedJson, JSONObject::class.java))
+                } else {
+                    r = R.ok(sanitizedJson)
+                }
+            }
+            return bufferFactory.wrap(JSON.toJSONBytes(r))
+        }
     }
 
     override fun getOrder(): Int {

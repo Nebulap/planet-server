@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController
  * @version 1.0.0
  */
 
-
 @RestController
 class FallbackController {
 
@@ -29,5 +28,10 @@ class FallbackController {
     @RequestMapping("/generate/fallback")
     fun fallback3() {
         throw CustomException(ServerCustomExceptionCode.GENERATE_SERVICE_ERROR)
+    }
+
+    @RequestMapping("/server/fallback")
+    fun fallback4() {
+        throw CustomException(ServerCustomExceptionCode.SERVER_SERVICE_ERROR)
     }
 }

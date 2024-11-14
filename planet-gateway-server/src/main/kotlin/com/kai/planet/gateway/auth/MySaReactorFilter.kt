@@ -1,6 +1,5 @@
 package com.kai.planet.gateway.auth
 
-import cn.dev33.satoken.SaManager
 import cn.dev33.satoken.exception.NotLoginException
 import cn.dev33.satoken.exception.NotRoleException
 import cn.dev33.satoken.exception.SaTokenException
@@ -9,8 +8,6 @@ import cn.dev33.satoken.reactor.context.SaReactorHolder
 import cn.dev33.satoken.reactor.context.SaReactorSyncHolder
 import cn.dev33.satoken.reactor.filter.SaReactorFilter
 import cn.dev33.satoken.router.SaRouter
-import cn.dev33.satoken.router.SaRouterStaff
-import cn.dev33.satoken.stp.StpUtil
 import com.alibaba.fastjson2.JSON
 import com.kai.planet.common.domain.response.R
 import com.kai.planet.common.exception.GlobalExceptionCode
@@ -31,17 +28,16 @@ class MySaReactorFilter : SaReactorFilter() {
 
 
     init {
-        addInclude("/**")
-        addExclude("/favicon.ico")
-        setAuth {
-            SaRouter.match("/**", "/user/sign-in") { _: SaRouterStaff? -> StpUtil.checkLogin() }
-        }
+//        addInclude("/**")
+//        addExclude("/favicon.ico")
+        addExclude("/**")
+//        setAuth {
+//            SaRouter.match("/**", "/user/sign-in") { _: SaRouterStaff? -> StpUtil.checkLogin() }
+//        }
     }
 
     override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
         exchange.attributes["WEB_FILTER_CHAIN_KEY"] = chain
-        val b =  SaManager.getStpInterface()
-
         return try {
             SaReactorSyncHolder.setContext(exchange)
             this.beforeAuth.run(null)
@@ -62,7 +58,6 @@ class MySaReactorFilter : SaReactorFilter() {
                 SaReactorSyncHolder.clearContext()
             }
         } catch (e: Exception) {
-            e.printStackTrace()
             val result = handleSaTokenException(e)
 
             if (exchange.response.headers.getFirst(HttpHeaders.CONTENT_TYPE) == null) {
@@ -85,8 +80,6 @@ class MySaReactorFilter : SaReactorFilter() {
         exceptionMap[NotLoginException::class.java] = GlobalExceptionCode.NOT_LOGIN_ERROR
         exceptionMap[NotRoleException::class.java] = GlobalExceptionCode.NOT_ROLE_ERROR
 
-        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.")
-        println(exceptionMap[exception::class.java])
         val exceptionCode = exceptionMap[exception::class.java] ?: GlobalExceptionCode.PERMISSION_ERROR
         return R.fail(exceptionCode.msg, exceptionCode.code)
     }

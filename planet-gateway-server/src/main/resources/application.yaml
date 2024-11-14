@@ -1,3 +1,4 @@
+
 spring:
   main:
     allow-bean-definition-overriding: true
@@ -44,5 +45,16 @@ spring:
                 name: UserServiceFallback
                 fallbackUri: forward:/user/fallback
 
+        - id: serverService
+          uri: lb://serverService
+          predicates:
+            - Path=/server/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: ServerServiceFallback
+                fallbackUri: forward:/server/fallback
+
 server:
   port: 8080
+
