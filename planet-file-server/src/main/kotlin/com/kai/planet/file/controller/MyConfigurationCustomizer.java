@@ -5,6 +5,9 @@ import com.mybatisflex.spring.boot.ConfigurationCustomizer;
 import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * @author 29002
+ */
 @Configuration
 public class MyConfigurationCustomizer implements ConfigurationCustomizer {
 

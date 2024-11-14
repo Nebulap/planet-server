@@ -1,10 +1,13 @@
 package com.kai.planet.file.controller
 
+import cn.dev33.satoken.annotation.SaIgnore
+import com.kai.planet.common.domain.dto.file.FileResponseDTO
+import com.kai.planet.common.domain.entity.file.File
 import com.kai.planet.common.domain.request.file.UploadFileRequest
 import com.kai.planet.file.service.FileService
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 /**
  *
@@ -14,12 +17,26 @@ import org.springframework.web.bind.annotation.RestController
  */
 
 
+@SaIgnore
 @RestController
 @RequestMapping("/file")
 class FileController(
     private val fileService: FileService
 ) {
 
-    @PostMapping("/upload")
-    fun upload(request: UploadFileRequest) =  fileService.uploadFile(request)
+    @PostMapping(value = ["/upload"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    fun upload(request: UploadFileRequest): FileResponseDTO {
+        return fileService.uploadFile(request)
+    }
+
+    @PostMapping(value = ["/upload2"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    fun upload2(@RequestParam("file") file: MultipartFile): FileResponseDTO {
+        val request = UploadFileRequest(file, 1, 1, true)
+        return fileService.uploadFile(request)
+    }
+
+    @GetMapping("/get-file-entity-by-uuid")
+    fun getFileById(@RequestParam("uuid") uuid: String): File? {
+        return fileService.getFileEntityByUuid(uuid)
+    }
 }

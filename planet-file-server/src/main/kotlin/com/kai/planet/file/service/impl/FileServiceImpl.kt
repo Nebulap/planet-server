@@ -9,6 +9,8 @@ import com.kai.planet.file.exception.FileCustomExceptionCode
 import com.kai.planet.file.mapper.FileMapper
 import com.kai.planet.file.mapper.FileTypeMapper
 import com.kai.planet.file.service.FileService
+import com.mybatisflex.kotlin.extensions.db.filterOne
+import com.mybatisflex.kotlin.extensions.kproperty.eq
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -34,10 +36,10 @@ class FileServiceImpl(
         val type = fileTypeMapper.selectOneById(request.type)
             ?: throw CustomException(FileCustomExceptionCode.FILE_TYPE_NOT_FOUND)
 
-        val requestFile = request.file
+        val requestFile = request.file!!
         val uuid = UUID.randomUUID().toString()
         val suffix = requestFile.originalFilename?.substringAfterLast(".") ?: ""
-        val dirPath = getFullPath(type.name, LocalDate.now(), "")
+        val dirPath = request.temp?.let { getFullPath(type.name, LocalDate.now(), "") } ?: getTempPath()
 
         val file = java.io.File(dirPath)
         if (!file.exists()) {
@@ -55,11 +57,13 @@ class FileServiceImpl(
         )
 
         fileMapper.insert(entity)
+        println(FileResponseDTO(uuid))
         return FileResponseDTO(uuid)
     }
 
     override fun deleteFile(request: DeleteFileRequest) {
-        TODO("Not yet implemented")
+        val file: File = filterOne { File::uuid eq request.uuid } ?: throw CustomException(FileCustomExceptionCode.FILE_NOT_FOUND)
+        java.io.File(file.path).delete()
     }
 
     override fun removeFile(request: DeleteFileRequest) {
@@ -67,7 +71,7 @@ class FileServiceImpl(
     }
 
     override fun getFileEntityByUuid(uuid: String): File? {
-        TODO("Not yet implemented")
+        return filterOne { File::uuid eq uuid }
     }
 
     override fun getFileByUuid(uuid: String): java.io.File? {
@@ -77,5 +81,11 @@ class FileServiceImpl(
     override fun getFullPath(category: String, date: LocalDate, filename: String): String {
         val dateStr = date.toString().replace("-", "/")
         return "$filePath/$category/$dateStr/$filename"
+    }
+
+
+    fun getTempPath(): String {
+        val dateStr = Date().toString().replace("-", "/")
+        return "$filePath/temp/$dateStr"
     }
 }

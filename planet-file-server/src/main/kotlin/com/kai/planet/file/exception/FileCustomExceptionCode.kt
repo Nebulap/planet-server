@@ -11,6 +11,6 @@ import com.kai.planet.common.exception.CustomExceptionCode
 
 
 enum class FileCustomExceptionCode(override val code: Int, override val msg: String) : CustomExceptionCode {
-    FILE_NOT_FOUND(20001, "没有找到该文件"),
+    FILE_NOT_FOUND(20001, "文件不存在"),
     FILE_TYPE_NOT_FOUND(20002, "文件类型不存在")
 }
