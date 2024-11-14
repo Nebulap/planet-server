@@ -7,11 +7,19 @@ spring:
   cloud:
     nacos:
       server-addr: 127.0.0.1:8848
+    openfeign:
+      client:
+        config:
+          default:
+            connect-timeout: 5000
+
   application:
     name: generateService
+  freemarker:
+    template-loader-path: "D:/planet/template"
+    suffix: ".ftl"
+    enabled: true
 server:
   port: 8082
 
 
-template:
-  path: D:/planet/template

@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# 指定要发送 POST 请求的 URL
+# url="http://192.168.160.1:8080/server/set-server-state"
+url="$${url}"
+
+# 循环执行
+while [ true ]; do
+    # 获取 CPU 信息
+    cpu_usage=$(top -bn1 | grep "Cpu(s)" | awk '{print $2 + $4}' | sed 's/,%//')
+
+    # 获取内存信息（单位：MB）
+    mem_total=$(free -m | awk '/^Mem:/{print $2}')
+    mem_free=$(free -m | awk '/^Mem:/{print $4}')
+
+    # 获取磁盘信息（单位：GB），确保转换准确
+    disk_info=$(df / | awk 'NR==2')
+    disk_total_gb=$(echo "scale=2; $(echo "$disk_info" | awk '{print $2}') / 1048576" | bc)
+    disk_used_gb=$(echo "scale=2; $(echo "$disk_info" | awk '{print $3}') / 1048576" | bc)
+
+    # 构造 JSON 格式的数据
+    json_data="{
+        \"cpuUsage\": \"$(printf "%.2f" "$cpu_usage")%\",
+        \"memTotal\": \"${mem_total}MB\",
+        \"memFree\": \"${mem_free}MB\",
+        \"diskTotal\": \"${disk_total_gb}GB\",
+        \"diskUsed\": \"${disk_used_gb}GB\"
+    }"
+
+    # 使用 curl 发送 POST 请求
+    curl -X POST -H "Content-Type: application/json" -d "$json_data" "$url"
+
+    # 等待5秒
+    sleep 5
+done

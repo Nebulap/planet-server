@@ -1,6 +1,5 @@
 package com.kai.planet.generate.client
 
-import com.kai.planet.common.domain.dto.user.UserInfoDTO
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.web.bind.annotation.GetMapping
 
@@ -15,6 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping
 @FeignClient(name = "userService", url = "http://localhost:8081")
 interface UserClient {
 
-    @GetMapping("/user/test")
-    fun test(): UserInfoDTO
+    @GetMapping("/user/test2")
+    fun test2(): String
 }

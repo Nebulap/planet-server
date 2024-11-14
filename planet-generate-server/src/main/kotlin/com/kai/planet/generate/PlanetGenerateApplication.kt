@@ -11,9 +11,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients
  * @version 1.0.0
  */
 
-@EnableFeignClients
+@EnableFeignClients(basePackages = ["com.kai.planet.generate.client"])
 @SpringBootApplication
-open class PlanetGenerateApplication
+class PlanetGenerateApplication
 
 fun main(args: Array<String>) {
     SpringApplication.run(PlanetGenerateApplication::class.java, *args)
