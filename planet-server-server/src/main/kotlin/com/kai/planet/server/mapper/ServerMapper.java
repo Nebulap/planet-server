@@ -1,5 +1,6 @@
 package com.kai.planet.server.mapper;
 
+import com.kai.planet.common.domain.dto.server.ServerDTO;
 import com.kai.planet.common.domain.entity.server.Server;
 import com.kai.planet.common.domain.request.server.AddServerRequest;
 import org.mapstruct.Mapper;
@@ -14,5 +15,6 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface ServerMapper {
+    ServerDTO toDTO(Server dto);
     Server toEntity(AddServerRequest request);
 }

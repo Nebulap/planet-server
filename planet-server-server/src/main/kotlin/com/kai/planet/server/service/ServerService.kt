@@ -15,7 +15,8 @@ import com.kai.planet.common.domain.request.server.GetServerStateRequest
 
 
 interface ServerService {
-    fun getServerList(request:GetServerListRequest): List<ServerDTO>
-    fun getServerState(request: GetServerStateRequest):ServerStateDTO
+    fun getServerList(request: GetServerListRequest): List<ServerDTO>
+    fun getServerState(request: GetServerStateRequest): ServerStateDTO
     fun addServer(request: AddServerRequest)
+    fun setServerState(request: ServerStateDTO, id: Long, host: String)
 }

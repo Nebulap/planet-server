@@ -13,7 +13,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients
 
 @EnableFeignClients
 @SpringBootApplication(scanBasePackages = ["com.kai.planet"])
-open class PlanetServerApplication
+class PlanetServerApplication
 
 fun main(args: Array<String>) {
     SpringApplication.run(PlanetServerApplication::class.java, *args)

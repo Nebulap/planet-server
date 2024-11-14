@@ -10,4 +10,4 @@ spring:
   application:
     name: serverService
 server:
-  port: 8083
+  port: 8089
