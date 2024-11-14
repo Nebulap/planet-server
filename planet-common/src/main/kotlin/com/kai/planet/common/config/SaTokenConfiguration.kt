@@ -36,8 +36,8 @@ class SaTokenConfiguration {
             }
 
             override fun getRoleList(p0: Any?, p1: String?): MutableList<String> {
-                val roles = StpUtil.getExtra(USER_CURRENT_ROLE_KEY).toString()
-                return ListUtil.toList(roles)
+                val roleStr : Any? = StpUtil.getExtra(USER_CURRENT_ROLE_KEY)
+                return ListUtil.toList(roleStr.toString())
             }
 
         }

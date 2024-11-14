@@ -22,4 +22,5 @@ open class RolesAspectAutoConfiguration {
         logger.info("RolesAspect injection success!")
         return RolesAspect()
     }
+
 }

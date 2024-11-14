@@ -1,5 +1,6 @@
 package com.kai.planet.common.feign
 
+import com.alibaba.fastjson2.JSON
 import com.kai.planet.common.constants.http.CustomHttpHeaders
 import com.kai.planet.common.exception.CustomMessageException
 import feign.Client
@@ -33,6 +34,16 @@ open class CustomFeignClient(
             throw CustomMessageException(message, exceptionCode.toInt())
         }
 
+
+        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>feign响应")
+        if (p0 != null) {
+            println(p0.url())
+        }
+        try {
+            println(JSON.toJSONString(response))
+        }catch (e:Exception){
+            println(response)
+        }
         return response
     }
 }

@@ -15,6 +15,6 @@ import com.mybatisflex.annotation.Table
 data class GenerateTemplate(
     @Id(keyType = KeyType.Auto)
     val id: Long? = null,
-    val templateName: String,
-    val templatePath: String,
+    val templateName: String = "",
+    val templatePath: String ="",
 )

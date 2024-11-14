@@ -10,8 +10,9 @@ import org.springframework.web.multipart.MultipartFile
  */
 
 
-class UploadFileRequest(
-    val file: MultipartFile,
-    val owner: Long?,
-    val type: Int
+data class UploadFileRequest(
+    val file: MultipartFile? = null,
+    val owner: Long? = -1,
+    val type: Int = -1,
+    val temp: Boolean? = false  // 是否是临时文件
 )

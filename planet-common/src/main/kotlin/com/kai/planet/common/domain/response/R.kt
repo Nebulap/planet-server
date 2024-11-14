@@ -37,6 +37,10 @@ class R<T> {
             return R(0, "ok", data)
         }
 
+        fun ok(): R<Void> {
+            return R(0, "ok",null)
+        }
+
         /**
          * Creates a failed response with the specified message and code.
          *

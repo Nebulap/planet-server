@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.annotation.PropertyAccessor
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -59,21 +61,22 @@ open class MyRedisAutoConfiguration {
 
         val stringRedisSerializer = StringRedisSerializer()
 
-        // Set key serializer
+        // set key serializer
         redisTemplate.keySerializer = stringRedisSerializer
 
-        // Set up Jackson2JsonRedisSerializer for value serialization
-        val objectMapper = ObjectMapper().apply {
+        // setup Jackson2JsonRedisSerializer for value serialization
+        val objectMapper = ObjectMapper().registerKotlinModule().apply {
+            registerModules(JavaTimeModule())
             setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY)
             activateDefaultTyping(
                 LaissezFaireSubTypeValidator.instance,
                 ObjectMapper.DefaultTyping.NON_FINAL,
-                JsonTypeInfo.As.PROPERTY
-            )
+                JsonTypeInfo.As.PROPERTY)
         }
-        val jackson2JsonRedisSerializer = Jackson2JsonRedisSerializer(objectMapper,Any::class.java)
 
-        // Set value and hash value serializers
+        val jackson2JsonRedisSerializer = Jackson2JsonRedisSerializer(objectMapper, Any::class.java)
+
+        // set value and hash value serializers
         redisTemplate.valueSerializer = jackson2JsonRedisSerializer
         redisTemplate.hashKeySerializer = stringRedisSerializer
         redisTemplate.hashValueSerializer = jackson2JsonRedisSerializer

@@ -8,8 +8,10 @@ package com.kai.planet.common.constants.user
  */
 
 
-enum class RoleEnum {
-    ADMIN,
-    USER,
-    GUEST
+enum class RoleEnum(
+    val level: Int
+) {
+    ADMIN(99),
+    USER(1),
+    GUEST(0)
 }

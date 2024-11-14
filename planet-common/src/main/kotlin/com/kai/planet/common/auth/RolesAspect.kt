@@ -2,6 +2,7 @@ package com.kai.planet.common.auth
 
 import cn.dev33.satoken.stp.StpUtil
 import com.kai.planet.common.annotation.Roles
+import com.kai.planet.common.constants.user.RoleEnum
 import com.kai.planet.common.exception.CustomException
 import com.kai.planet.common.exception.GlobalExceptionCode
 import org.aspectj.lang.ProceedingJoinPoint
@@ -38,12 +39,13 @@ class RolesAspect {
 
         // Get the required roles
         val requiredRoles = rolesAnnotation.value
-        val requiredRoleStrings = requiredRoles.map { it.name }.toTypedArray()
+        val requiredRoleMiniLevel = requiredRoles.minOfOrNull { it.level } ?: Int.MAX_VALUE
 
-        // Check if the user has any of the required roles
-        val hasAnyRole = StpUtil.hasRoleOr(*requiredRoleStrings)
+        // Get user roles
+        val userRole = StpUtil.getRoleList().firstOrNull() ?: throw CustomException(GlobalExceptionCode.NOT_ROLE_ERROR)
+        val userLevel = RoleEnum.valueOf(userRole).level
 
-        if (!hasAnyRole) {
+        if (userLevel < requiredRoleMiniLevel) {
             throw CustomException(GlobalExceptionCode.PERMISSION_ERROR)
         }
 

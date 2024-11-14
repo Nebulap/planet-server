@@ -27,6 +27,8 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomException::class)
     fun handleCustomException(e: CustomException) :R<Void> {
+        println("发生自定义异常!")
+        println(e.exceptionCode.msg)
         val isInternalRequest = request.getHeader(CustomHttpHeaders.X_INTERNAL_REQUEST) == true.toString()
         if (isInternalRequest){
             val originalMessage = e.exceptionCode.msg
@@ -40,6 +42,16 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomMessageException::class)
     fun handleCustomMessageException(e: CustomMessageException) :R<Void> {
+        println("发生自定义异常!")
+        println(e.message)
         return  R.fail(e.message, e.code)
+    }
+
+    @ExceptionHandler(Exception::class)
+    fun handleCustomMessageException(e: Exception) :R<Void> {
+        println("发生意外异常!")
+        println(e.message)
+        e.printStackTrace()
+        return  R.fail(e.message ?: "", 500)
     }
 }
