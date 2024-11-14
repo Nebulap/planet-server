@@ -5,6 +5,7 @@ import com.jcraft.jsch.*
 import com.kai.planet.common.domain.entity.server.Remote
 import com.kai.planet.common.exception.CustomException
 import com.kai.planet.common.exception.GlobalExceptionCode
+import com.kai.planet.server.exception.ServerCustomExceptionCode
 import java.io.*
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -87,21 +88,13 @@ object JSchUtil {
         }
     }
 
-    /**
-     * scp复制文件到远程指定路径
-     *
-     * @param session 会话
-     * @param source 文件源
-     * @param destination 远程目标路径
-     * @throws IOException
-     * @throws JSchException
-     */
-    @Throws(IOException::class, JSchException::class)
+
     fun scpTo(session: Session, source: String, destination: String) {
         var fileInputStream: FileInputStream? = null
         var channel: ChannelExec? = null
         try {
             channel = openExecChannel(session)
+
             val out = channel.outputStream
             val `in` = channel.inputStream
             var command = "scp -t $destination"
@@ -133,10 +126,10 @@ object JSchUtil {
 
             if (checkAck(`in`) != 0) return
         } catch (e: Exception) {
-            throw e
+            throw CustomException(ServerCustomExceptionCode.SESSION_NULL)
         } finally {
             closeInputStream(fileInputStream)
-            disconnect(channel!!)
+            disconnect(channel)
         }
     }
 
@@ -211,7 +204,7 @@ object JSchUtil {
             }
         } finally {
             closeOutputStream(fileOutputStream)
-            disconnect(channel!!)
+            disconnect(channel)
         }
     }
 
@@ -245,13 +238,15 @@ object JSchUtil {
     /**
      * 关闭连接
      */
-    fun disconnect(session: Session) {
+    fun disconnect(session: Session?) {
+        if (session == null) return
         if (session.isConnected) {
             session.disconnect()
         }
     }
 
-    fun disconnect(channel: Channel) {
+    fun disconnect(channel: Channel?) {
+        if (channel == null) return
         if (channel.isConnected) {
             channel.disconnect()
         }
@@ -277,10 +272,12 @@ object JSchUtil {
     }
 
     fun closeInputStream(input: InputStream?) {
-        input?.close()
+        if (input == null) return
+        input.close()
     }
 
     fun closeOutputStream(output: OutputStream?) {
-        output?.close()
+        if (output == null) return
+        output.close()
     }
 }

@@ -21,5 +21,6 @@ enum class ServerCustomExceptionCode(override val code: Int, override val msg: S
     REMOTE_NOT_FOUND_OR_USERNAME_ERROR(30008, "远程服务器不存在或用户名错误"),
     REMOTE_NOT_FOUND_OR_PORT_ERROR(30009, "远程服务器不存在或端口错误"),
     REMOTE_NOT_FOUND_OR_PRIVATE_KEY_ERROR(30010, "远程服务器不存在或私钥错误"),
-    SERVER_FOUND(30011, "服务器已存在")
+    SERVER_FOUND(30011, "服务器已存在"),
+    SESSION_NULL(30012, "会话为空, 请检查配置项是否正确")
 }
