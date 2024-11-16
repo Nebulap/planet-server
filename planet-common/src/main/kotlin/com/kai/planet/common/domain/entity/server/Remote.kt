@@ -9,7 +9,7 @@ data class Remote(
     @Id(keyType = KeyType.Auto)
     val id: Long? = null, // 使用可空类型，以便可以根据需求为 null
     var serverId: Int,
-    val host: String,
+    var host: String?,
     val port: Int = 22, // 默认端口为 22
     val user: String ="",
     val password: String? ="",

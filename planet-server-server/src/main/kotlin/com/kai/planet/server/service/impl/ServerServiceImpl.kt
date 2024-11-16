@@ -27,6 +27,7 @@ import com.mybatisflex.kotlin.extensions.kproperty.eq
 import com.mybatisflex.kotlin.extensions.kproperty.`in`
 import com.mybatisflex.kotlin.extensions.wrapper.whereWith
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -75,48 +76,81 @@ class ServerServiceImpl(
         return state
     }
 
+
+    @Async
     @Transactional(rollbackFor = [Exception::class])
     override fun addServer(request: AddServerRequest) {
         val dbServer = filterOne<Server> { (Server::ip eq request.ip) }
+        println("Line 1") // 1
         if (dbServer != null) {
+            println("Line 2") // 2
             throw CustomException(ServerCustomExceptionCode.SERVER_FOUND)
         }
+        println("Line 3") // 3
         val server = serverMapper.toEntity(request)
+        println("Line 4") // 4
         insert(server)
+        println("Line 5") // 5
 
         val userServer = ServerUser(userId = 1L, serverId = server.id!!)
+        println("Line 6") // 6
         insert(userServer)
+        println("Line 7") // 7
 
         val remote = request.remote
+        println("Line 8") // 8
         remote.serverId = server.id!!
+        println("Line 9") // 9
+        remote.host = server.ip!!
+        println("Line 10") // 10
         insert(remote)
+        println("Line 11") // 11
 
         val userId = 1L
-        val root = HashMap<String, Any>();
+        println("Line 12") // 12
+        val root = HashMap<String, Any>()
+        println("Line 13") // 13
         root["url"] = "http://192.168.160.1:8080/server/set-server-state?id=$userId&host=${server.ip}"
+        println("Line 14") // 14
         val stateFileResponseDTO = generateClient.generateFile(GenerateFileRequest(1, root))
+        println("Line 15") // 15
         val stateFile = fileClient.getFileById(stateFileResponseDTO.uuid)!!
+        println("Line 16") // 16
 
         val session = JSchUtil.getSession(remote)
+        println("Line 17") // 17
         //TODO should be replaced with a more secure way, now root user is not allowed
         transferAndExecuteScriptAsync(session, stateFile.path, remote.user, "/home/${remote.user}/planet/state.sh")
+        println("Line 18") // 18
 
         if (request.autoFullInfo) {
+            println("Line 19") // 19
             val serverInfoFileResponseDTO = generateClient.generateFile(GenerateFileRequest(2, root))
+            println("Line 20") // 20
             val serverInfoFile = fileClient.getFileById(serverInfoFileResponseDTO.uuid)!!
+            println("Line 21") // 21
             val result = transferAndExecuteScript(session, serverInfoFile.path, remote.user, "/home/${remote.user}/planet/server-info.sh")
+            println("Line 22") // 22
             val info = JSON.parseObject(result[0], Server::class.java)
+            println("Line 23") // 23
             update<Server> {
                 Server::os set info.os
+                println("Line 24") // 24
                 Server::memory set info.memory
+                println("Line 25") // 25
                 Server::disk set info.disk
+                println("Line 26") // 26
                 Server::cpuCores set info.cpuCores
+                println("Line 27") // 27
                 whereWith { Server::id eq server.id }
             }
+            println("Line 28") // 28
         }
 
         session.disconnect()
+        println("Line 29") // 29
     }
+
 
     /**
      *  receive server state from remote server and save to redis

@@ -29,5 +29,5 @@ data class AddServerRequest(
 
     val remote: Remote, // 远程服务器配置
 
-    val autoFullInfo: Boolean = false,
+    val autoFullInfo: Boolean = true,
 )
