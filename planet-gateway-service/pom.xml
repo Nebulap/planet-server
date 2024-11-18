@@ -15,7 +15,7 @@
         <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
     </properties>
 
-    <artifactId>planet-gateway-server</artifactId>
+    <artifactId>gateway</artifactId>
 
 
     <build>

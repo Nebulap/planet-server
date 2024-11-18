@@ -59,8 +59,8 @@ spring:
             - Path=/server/**
           filters:
             - name: CustomCircuitBreakerFilterFactory
+            - name: CircuitBreaker
               args:
-                logStackTrace: true
                 name: ServerServiceFallback
                 fallbackUri: forward:/server/fallback
 

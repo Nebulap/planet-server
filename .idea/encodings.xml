@@ -3,16 +3,16 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/planet-common/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/planet-common/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/planet-file-server/src/main/kotlin" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/planet-file-server/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/planet-gateway-server/src/main/kotlin" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/planet-gateway-server/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/planet-generate-server/src/main/kotlin" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/planet-generate-server/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/planet-server-server/src/main/kotlin" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/planet-server-server/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/planet-user-server/src/main/kotlin" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/planet-user-server/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/planet-file-service/src/main/kotlin" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/planet-file-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/planet-gateway-service/src/main/kotlin" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/planet-gateway-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/planet-generate-service/src/main/kotlin" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/planet-generate-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/planet-server-service/src/main/kotlin" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/planet-server-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/planet-user-service/src/main/kotlin" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/planet-user-service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
