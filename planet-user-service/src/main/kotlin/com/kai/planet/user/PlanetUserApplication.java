@@ -2,6 +2,7 @@ package com.kai.planet.user;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
  *
@@ -12,8 +13,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication
-public class PlanetUserServerApplication  {
+@EnableFeignClients(basePackages = "com.kai.planet.user.client")
+public class PlanetUserApplication {
     public static void main(String[] args) {
-        SpringApplication.run(PlanetUserServerApplication.class, args);
+        SpringApplication.run(PlanetUserApplication.class, args);
     }
 }

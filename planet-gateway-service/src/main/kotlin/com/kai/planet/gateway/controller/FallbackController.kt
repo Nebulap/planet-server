@@ -34,4 +34,9 @@ class FallbackController {
     fun fallback4() {
         throw CustomException(ServerCustomExceptionCode.SERVER_SERVICE_ERROR)
     }
+
+    @RequestMapping("/email/fallback")
+    fun fallback5() {
+        throw CustomException(ServerCustomExceptionCode.EMAIL_SERVICE_ERROR)
+    }
 }

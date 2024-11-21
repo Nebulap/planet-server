@@ -1,12 +1,7 @@
-#resilience4j:
-#  circuitbreaker:
-#    instances:
-#      register-health-indicator: true
-#      failure-rate-threshold: 50  # 失败率阈值
-#      sliding-window-size: 10     # 计算失败率的滑动窗口大小
-#      wait-durationIn-open-state: 10000ms  # 打开状态的等待时间
-#      permitted-number-of-callsIn-half-open-state: 5  # 半开状态允许的请求次数
-#      event-consumer-bufferSize: 10
+hystrix:
+  metrics:
+    polling-interval-ms: 10000
+
 spring:
   main:
     allow-bean-definition-overriding: true
@@ -28,6 +23,7 @@ spring:
           predicates:
             - Path=/file/**
           filters:
+            - name: CustomCircuitBreakerFilterFactory
             - name: CircuitBreaker
               args:
                 name: FileServiceFallback
@@ -38,6 +34,7 @@ spring:
           predicates:
             - Path=/generate/**
           filters:
+            - name: CustomCircuitBreakerFilterFactory
             - name: CircuitBreaker
               args:
                 name: GenerateServiceFallback
@@ -48,6 +45,7 @@ spring:
           predicates:
             - Path=/user/**
           filters:
+            - name: CustomCircuitBreakerFilterFactory
             - name: CircuitBreaker
               args:
                 name: UserServiceFallback
@@ -63,6 +61,19 @@ spring:
               args:
                 name: ServerServiceFallback
                 fallbackUri: forward:/server/fallback
+
+
+
+        - id: emailService
+          uri: lb://emailService
+          predicates:
+            - Path=/email/**
+          filters:
+            - name: CustomCircuitBreakerFilterFactory
+            - name: CircuitBreaker
+              args:
+                name: EmailServiceFallback
+                fallbackUri: forward:/email/fallback
 
 server:
   port: 8080

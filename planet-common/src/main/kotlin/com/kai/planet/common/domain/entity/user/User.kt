@@ -17,6 +17,7 @@ data class User (
     @Id(keyType = KeyType.Auto) val id: Long?,
     val username: String,
     val password: String,
+    val email: String,
     val role: Int,
     val createTime: LocalDateTime?
 )

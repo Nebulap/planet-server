@@ -15,6 +15,7 @@
         <module>planet-generate-service</module>
         <module>planet-file-service</module>
         <module>planet-server-service</module>
+        <module>planet-mail-service</module>
     </modules>
 
     <properties>

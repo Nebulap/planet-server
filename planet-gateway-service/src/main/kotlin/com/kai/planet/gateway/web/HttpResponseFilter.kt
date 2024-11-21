@@ -14,11 +14,10 @@ import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.core.io.buffer.DefaultDataBufferFactory
 import org.springframework.http.server.reactive.ServerHttpResponse
 import org.springframework.http.server.reactive.ServerHttpResponseDecorator
-import org.springframework.stereotype.Component
 import org.springframework.web.server.ServerWebExchange
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import java.nio.charset.StandardCharsets
+import java.nio.charset.Charset
 
 
 /**
@@ -29,7 +28,7 @@ import java.nio.charset.StandardCharsets
  */
 
 
-@Component
+//@Component
 class HttpResponseFilter : GlobalFilter, Ordered {
 
     override fun filter(exchange: ServerWebExchange, chain: GatewayFilterChain): Mono<Void> {
@@ -37,15 +36,13 @@ class HttpResponseFilter : GlobalFilter, Ordered {
     }
 
     private fun requestDecorator(exchange: ServerWebExchange, chain: GatewayFilterChain): Mono<Void> {
-        val bufferFactory: DataBufferFactory = exchange.response.bufferFactory()
         // Get response body
-        val serverHttpResponseDecorator = CacheServerHttpResponseDecorator(exchange.response, bufferFactory)
+        val serverHttpResponseDecorator = CacheServerHttpResponseDecorator(exchange.response)
         return chain.filter(exchange.mutate().response(serverHttpResponseDecorator).build())
     }
 
     class CacheServerHttpResponseDecorator(
-        response: ServerHttpResponse,
-        private val bufferFactory: DataBufferFactory
+        response: ServerHttpResponse
     ) : ServerHttpResponseDecorator(response) {
         override fun writeWith(body: Publisher<out DataBuffer>): Mono<Void> {
             if (body !is Flux<*>) {
@@ -67,7 +64,7 @@ class HttpResponseFilter : GlobalFilter, Ordered {
             val content = ByteArray(join.readableByteCount())
             join.read(content);
             DataBufferUtils.release(join);
-            val responseString = String(content, StandardCharsets.UTF_8)
+            val responseString = String(content, Charset.forName("UTF-8"))
 
 //            val content = ByteArray(dataBuffer.readableByteCount())
 //            dataBuffer.read(content)
@@ -75,6 +72,7 @@ class HttpResponseFilter : GlobalFilter, Ordered {
 
             println(">>>>>>>>>>>>>>>>>>>>>>>封装")
 //            val responseString = String(content, StandardCharsets.UTF_8)
+            println(responseString)
             // 移除控制字符
             val sanitizedJson = responseString.replace(Regex("[\\x00-\\x1F\\x7F]"), "")
             var r: R<*>?
@@ -82,14 +80,17 @@ class HttpResponseFilter : GlobalFilter, Ordered {
                 r = JSON.parseObject(sanitizedJson, R::class.java)
             } catch (e: Exception) {
                 if (sanitizedJson.startsWith("[")) {
+                    println("列表")
                     r = R.ok(JSON.parseArray(sanitizedJson, JSONObject::class.java))
                 } else if (sanitizedJson.startsWith("{")) {
+                    println("对象")
                     r = R.ok(JSON.parseObject(sanitizedJson, JSONObject::class.java))
                 } else {
+                    println("字符串")
                     r = R.ok(sanitizedJson)
                 }
             }
-            return bufferFactory.wrap(JSON.toJSONBytes(r))
+            return dataBufferFactory.wrap(JSON.toJSONBytes(r))
         }
     }
 
@@ -97,3 +98,5 @@ class HttpResponseFilter : GlobalFilter, Ordered {
         return NettyWriteResponseFilter.WRITE_RESPONSE_FILTER_ORDER - 1
     }
 }
+
+

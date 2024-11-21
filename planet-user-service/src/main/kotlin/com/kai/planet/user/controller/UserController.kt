@@ -1,14 +1,17 @@
 package com.kai.planet.user.controller
 
-import com.kai.planet.common.annotation.Roles
-import com.kai.planet.common.constants.user.RoleEnum
+import cn.dev33.satoken.annotation.SaIgnore
+import com.kai.planet.common.domain.request.user.SendCodeRequest
 import com.kai.planet.common.domain.request.user.UserSignInRequest
 import com.kai.planet.common.domain.request.user.UserSignUpRequest
-import com.kai.planet.common.exception.CustomException
-import com.kai.planet.user.exception.UserCustomExceptionCode
+import com.kai.planet.common.domain.request.user.ValidateCodeRequest
+import com.kai.planet.common.domain.response.R
 import com.kai.planet.user.service.UserService
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 /**
  *
@@ -23,22 +26,24 @@ import org.springframework.web.bind.annotation.*
 class UserController(
     private val userService: UserService
 ) {
-
-    @PostMapping("/sign-in")
+    @SaIgnore
+    @PostMapping("/auth/sign-in")
     fun signIn(@Validated @RequestBody request: UserSignInRequest) = userService.signIn(request)
 
-    @PostMapping("/sign-up")
+    @SaIgnore
+    @PostMapping("/auth/sign-up")
     fun signUp(@Validated @RequestBody request: UserSignUpRequest) = userService.signUp(request)
 
-    @Roles(RoleEnum.ADMIN)
-    @GetMapping("/test")
-    fun test(): String {
-        throw CustomException(UserCustomExceptionCode.USER_ROLE_EXISTS)
+    @SaIgnore
+    @PostMapping("/auth/send-code")
+    fun sendCode(@Validated @RequestBody request: SendCodeRequest): R<Void> {
+        userService.sendCode(request)
+        return R.ok();
     }
 
-    @Roles(RoleEnum.USER)
-    @GetMapping("/test1")
-    fun test1(): String {
-        throw CustomException(UserCustomExceptionCode.USER_ROLE_EXISTS)
+    @SaIgnore
+    @PostMapping("/auth/validate-code")
+    fun validateCode(@Validated @RequestBody request: ValidateCodeRequest): R<String> {
+        return R.ok(userService.validateCode(request))
     }
 }

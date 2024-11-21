@@ -7,7 +7,14 @@ spring:
   cloud:
     nacos:
       server-addr: 127.0.0.1:8848
+    openfeign:
+      client:
+        config:
+          default:
+            connect-timeout: 10000
+            read-timeout: 10000
   application:
     name: serverService
 server:
   port: 8089
+

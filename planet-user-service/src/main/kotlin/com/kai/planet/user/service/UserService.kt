@@ -3,8 +3,10 @@ package com.kai.planet.user.service
 import com.kai.planet.common.domain.dto.user.UserInfoDTO
 import com.kai.planet.common.domain.dto.user.UserSignInDTO
 import com.kai.planet.common.domain.entity.user.User
+import com.kai.planet.common.domain.request.user.SendCodeRequest
 import com.kai.planet.common.domain.request.user.UserSignInRequest
 import com.kai.planet.common.domain.request.user.UserSignUpRequest
+import com.kai.planet.common.domain.request.user.ValidateCodeRequest
 
 
 /**
@@ -21,4 +23,7 @@ interface UserService {
     fun findUser(username: String): User?
     fun findUser(userId: Long): User?
     fun getUserInfo(userId: Long): UserInfoDTO
+
+    fun sendCode(request: SendCodeRequest)
+    fun validateCode(request: ValidateCodeRequest) : String
 }

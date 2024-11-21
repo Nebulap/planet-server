@@ -10,5 +10,8 @@ package com.kai.planet.common.domain.request.user
 
 data class UserSignUpRequest (
     val username: String,
-    val password: String
+    val password: String,
+    val confirmPassword: String,
+    val email: String,
+    val uuid: String
 )

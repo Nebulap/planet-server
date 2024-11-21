@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/planet
+    username: root
+    password: forest..
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  mail:
+    host: smtp.qq.com
+    username: 2643354082@qq.com
+    password: wocqkbexpqrdeaec
+    properties:
+      mail:
+        imap:
+          ssl:
+            socketFactory:
+              fallback: false
+        smtp:
+          ssl:
+            enable: true
+          auth: true
+    protocol: smtp
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
+    openfeign:
+      client:
+        config:
+          default:
+            connect-timeout: 5000
+
+  application:
+    name: emailService
+server:
+  port: 8084
+
+

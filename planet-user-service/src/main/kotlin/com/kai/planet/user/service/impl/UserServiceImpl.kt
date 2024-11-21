@@ -8,9 +8,13 @@ import com.kai.planet.common.domain.dto.user.UserSignInDTO
 import com.kai.planet.common.domain.entity.user.Role
 import com.kai.planet.common.domain.entity.user.User
 import com.kai.planet.common.domain.entity.user.UserRole
+import com.kai.planet.common.domain.request.email.SendSimpleMailRequest
+import com.kai.planet.common.domain.request.user.SendCodeRequest
 import com.kai.planet.common.domain.request.user.UserSignInRequest
 import com.kai.planet.common.domain.request.user.UserSignUpRequest
+import com.kai.planet.common.domain.request.user.ValidateCodeRequest
 import com.kai.planet.common.exception.CustomException
+import com.kai.planet.user.client.EmailClient
 import com.kai.planet.user.exception.UserCustomExceptionCode
 import com.kai.planet.user.mapper.UserMapper
 import com.kai.planet.user.service.PermissionService
@@ -22,6 +26,8 @@ import com.mybatisflex.kotlin.extensions.wrapper.select
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  *
@@ -33,6 +39,7 @@ import org.springframework.stereotype.Service
 @Service
 class UserServiceImpl(
     private val userMapper: UserMapper,
+    private val emailClient: EmailClient,
     private val redisTemplate: RedisTemplate<String, Any>,
 
     private val permissionService: PermissionService,
@@ -60,6 +67,18 @@ class UserServiceImpl(
     }
 
     override fun signUp(request: UserSignUpRequest): UserSignInDTO {
+        val key = "email:code:uuid:${request.email}"
+        if (redisTemplate.hasKey(key)) {
+            val uuid = redisTemplate.opsForValue().get(key) as String
+            if (uuid != request.uuid) {
+                throw CustomException(UserCustomExceptionCode.REGISTER_FAIL)
+            }
+        } else {
+            throw CustomException(UserCustomExceptionCode.REGISTER_FAIL)
+        }
+        if (request.password != request.confirmPassword) {
+            throw CustomException(UserCustomExceptionCode.PASSWORD_NOT_MATCH)
+        }
         // Find user by username
         var user = findUser(request.username)
         if (user != null) {
@@ -67,8 +86,9 @@ class UserServiceImpl(
         }
 
         val encodePw = BCryptPasswordEncoder().encode(request.password)
-        user = User(null, request.username, encodePw, 1, null)
+        user = User(null, request.username, encodePw, request.email,1, null)
         userMapper.insert(user)
+        redisTemplate.delete(key)
 
         // Add ADMIN role
         permissionService.addRole(user.id!!, com.kai.planet.common.constants.user.RoleEnum.ADMIN)
@@ -121,4 +141,48 @@ class UserServiceImpl(
         )
     }
 
+    override fun sendCode(request: SendCodeRequest) {
+        val user = filterOne<User> { User::email eq request.email }
+        if (user != null) {
+            throw CustomException(UserCustomExceptionCode.EMAIL_NOT_FOUND)
+        }
+
+        val code = generateVerificationCode()
+        val key = "email:code:${request.email}"
+        emailClient.sendSimpleMail(
+            SendSimpleMailRequest(
+                to = request.email,
+                subject = "验证码",
+                body = """
+                    您的验证码是：$code
+                    请在5分钟内完成验证。
+
+                    此邮件来自 Planet (www.planet.cn)。如果您未发起此请求，请忽略本邮件。
+        """.trimIndent()
+            )
+        )
+        redisTemplate.opsForValue().set(key, code, 5, TimeUnit.MINUTES)
+    }
+
+    override fun validateCode(request: ValidateCodeRequest): String {
+        val key1 = "email:code:${request.email}"
+        if (redisTemplate.hasKey(key1)) {
+            val code = redisTemplate.opsForValue().get(key1) as String
+            if (code != request.code) {
+                throw CustomException(UserCustomExceptionCode.CODE_NOT_MATCH)
+            }
+        } else {
+            throw CustomException(UserCustomExceptionCode.CODE_NOT_MATCH)
+        }
+
+        val uuid = UUID.randomUUID().toString()
+        val key2 = "email:uuid:${request.email}"
+        redisTemplate.opsForValue().set(key2,uuid)
+
+        return uuid;
+    }
+
+    fun generateVerificationCode(): String {
+        return (100000..999999).random().toString()
+    }
 }

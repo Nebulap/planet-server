@@ -16,5 +16,12 @@ enum class UserCustomExceptionCode(override val code: Int, override val msg: Str
     PERMISSION_DENIED(10002, "权限不足"),
     USER_ALREADY_EXISTS(10003, "用户名已存在"),
     USER_ROLE_EXISTS(10004, "用户角色已存在"),
-    USER_ROLE_NOT_EXISTS(10005, "用户角色不存在")
+    USER_ROLE_NOT_EXISTS(10005, "用户角色不存在"),
+    CODE_NOT_MATCH(10006, "验证码不匹配"),
+    PASSWORD_NOT_MATCH(10007, "两次密码不一致"),
+    EMAIL_NOT_FOUND(10008, "邮箱不存在"),
+    EMAIL_NOT_FOUND_OR_PASSWORD_ERROR(10011, "邮箱不存在或密码错误"),
+    REGISTER_FAIL(10012, "注册失败,请重新注册"),
+    LOGIN_FAIL(10013, "登录失败"),
+    LOGOUT_FAIL(10014, "登出失败")
 }

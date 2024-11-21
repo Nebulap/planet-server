@@ -8,6 +8,8 @@ import cn.dev33.satoken.reactor.context.SaReactorHolder
 import cn.dev33.satoken.reactor.context.SaReactorSyncHolder
 import cn.dev33.satoken.reactor.filter.SaReactorFilter
 import cn.dev33.satoken.router.SaRouter
+import cn.dev33.satoken.router.SaRouterStaff
+import cn.dev33.satoken.stp.StpUtil
 import com.alibaba.fastjson2.JSON
 import com.kai.planet.common.domain.response.R
 import com.kai.planet.common.exception.GlobalExceptionCode
@@ -28,12 +30,11 @@ class MySaReactorFilter : SaReactorFilter() {
 
 
     init {
-//        addInclude("/**")
-//        addExclude("/favicon.ico")
-        addExclude("/**")
-//        setAuth {
-//            SaRouter.match("/**", "/user/sign-in") { _: SaRouterStaff? -> StpUtil.checkLogin() }
-//        }
+        addInclude("/**")
+        addExclude("/favicon.ico", "/user/auth/**")
+        setAuth {
+            SaRouter.match("/**") { _: SaRouterStaff? -> StpUtil.checkLogin() }
+        }
     }
 
     override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {

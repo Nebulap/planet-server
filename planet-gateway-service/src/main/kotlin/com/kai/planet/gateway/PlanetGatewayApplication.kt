@@ -11,8 +11,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
  */
 
 @SpringBootApplication
-open class PlanetGatewayServerApplication
+open class PlanetGatewayApplication
 
 fun main(args: Array<String>) {
-            SpringApplication.run(PlanetGatewayServerApplication::class.java, *args)
+            SpringApplication.run(PlanetGatewayApplication::class.java, *args)
 }
