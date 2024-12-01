@@ -1,5 +1,6 @@
 package com.kai.planet.common.domain.entity.user
 
+import com.mybatisflex.annotation.Column
 import com.mybatisflex.annotation.Id
 import com.mybatisflex.annotation.KeyType
 import com.mybatisflex.annotation.Table
@@ -19,5 +20,6 @@ data class User (
     val password: String,
     val email: String,
     val role: Int,
+    @Column(onInsertValue = "now()", onUpdateValue = "now()")
     val createTime: LocalDateTime?
 )

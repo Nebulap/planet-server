@@ -9,5 +9,6 @@ package com.kai.planet.common.domain.dto.user
 
 
 data class UserSignInDTO(
-    val token: String
+    val token: String,
+    val user:UserInfoDTO
 )

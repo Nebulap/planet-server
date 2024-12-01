@@ -12,8 +12,10 @@ import org.springframework.core.io.buffer.DataBuffer
 import org.springframework.core.io.buffer.DataBufferFactory
 import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.core.io.buffer.DefaultDataBufferFactory
+import org.springframework.http.HttpHeaders
 import org.springframework.http.server.reactive.ServerHttpResponse
 import org.springframework.http.server.reactive.ServerHttpResponseDecorator
+import org.springframework.stereotype.Component
 import org.springframework.web.server.ServerWebExchange
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -28,7 +30,7 @@ import java.nio.charset.Charset
  */
 
 
-//@Component
+@Component
 class HttpResponseFilter : GlobalFilter, Ordered {
 
     override fun filter(exchange: ServerWebExchange, chain: GatewayFilterChain): Mono<Void> {
@@ -42,8 +44,9 @@ class HttpResponseFilter : GlobalFilter, Ordered {
     }
 
     class CacheServerHttpResponseDecorator(
-        response: ServerHttpResponse
+        private val response: ServerHttpResponse,
     ) : ServerHttpResponseDecorator(response) {
+
         override fun writeWith(body: Publisher<out DataBuffer>): Mono<Void> {
             if (body !is Flux<*>) {
                 return super.writeWith(body)
@@ -51,6 +54,8 @@ class HttpResponseFilter : GlobalFilter, Ordered {
             val fluxBody = body as Flux<out DataBuffer>
 
             val publisher = fluxBody.buffer().map { dataBuffer -> processDataBuffer(dataBuffer) }
+//            response.headers.contentType = MediaType.APPLICATION_JSON;
+            response.headers.remove(HttpHeaders.CONTENT_LENGTH)
             return super.writeWith(publisher)
         }
 

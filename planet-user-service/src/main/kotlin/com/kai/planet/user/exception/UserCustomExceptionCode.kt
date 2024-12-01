@@ -23,5 +23,7 @@ enum class UserCustomExceptionCode(override val code: Int, override val msg: Str
     EMAIL_NOT_FOUND_OR_PASSWORD_ERROR(10011, "邮箱不存在或密码错误"),
     REGISTER_FAIL(10012, "注册失败,请重新注册"),
     LOGIN_FAIL(10013, "登录失败"),
-    LOGOUT_FAIL(10014, "登出失败")
+    LOGOUT_FAIL(10014, "登出失败"),
+    EMAIL_REGISTERED(10015, "邮箱已注册"),
+    USER_PROFILE_NOT_EXISTS(10016, "用户信息不存在"),
 }

@@ -1,4 +1,4 @@
-package com.kai.planet.user.mapper
+package com.kai.planet.user.repository
 
 import com.kai.planet.common.domain.entity.user.User
 import com.mybatisflex.core.BaseMapper
@@ -12,5 +12,5 @@ import org.apache.ibatis.annotations.Mapper
  */
 
 @Mapper
-interface UserMapper : BaseMapper<User> {
+interface UserRepository : BaseMapper<User> {
 }
